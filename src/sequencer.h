@@ -8,7 +8,7 @@
 #include "pattern.h"
 
 #define BPM_CONTROL_DELAY 150
-#define START_BPM 120
+#define START_BPM 400
 #define MAX_BPM 2000
 #define MIN_BPM 15
 
@@ -72,6 +72,7 @@ private:
     }
 
 public:
+    bool followPlayAhead = true;
     Sequencer(SequencerLoopMode loopMode = LongestPattern)
     {
         patterns.reserve(8);
@@ -91,6 +92,7 @@ public:
     {
         this->bpm = bpm;
         lastManualBPMupdate = millis();
+        updateBpmTicker();
     }
 
     void adjustBpm(int8_t amount)
@@ -126,8 +128,16 @@ public:
     Note getNoteAtBeat(uint8_t patternIndex, uint16_t beat)
     {
         Pattern p = patterns[patternIndex];
-        return p.getNoteAt(beat % p.getPatternLength());        
-    }    
+        return p.getNoteAt(beat % p.getPatternLength());
+    }
+
+    void fillNoteDataArray(uint16_t sequenceOffset, uint16_t numPatterns, uint16_t numBeats, uint8_t *displayBuffer, size_t bufferSize)
+    {
+        for (uint16_t i = 0; i < bufferSize; i++)
+        {
+            displayBuffer[i] = getNoteAtBeat(i / numPatterns, i % numBeats + sequenceOffset).getData();
+        }
+    }
 };
 
 uint16_t Sequencer::currentBeat = 0;
