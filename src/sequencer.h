@@ -91,8 +91,7 @@ public:
     void setBpm(uint16_t bpm, uint8_t notesPerBeat = 4)
     {
         this->bpm = bpm;
-        lastManualBPMupdate = millis();
-        updateBpmTicker();
+        lastManualBPMupdate = millis();        
     }
 
     void adjustBpm(int8_t amount)
